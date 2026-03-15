@@ -7,34 +7,6 @@ using namespace std;
 typedef vector<vector<int>> Grilla;
 typedef vector<int> Fila;
 
-int calcularArea(Grilla g,int f, int c){//O(w+h)
-    int x,y;
-    x = y = 0;
-    for(int j = c; j < g[0].size() && g[f][j] < 1; j++)
-        x++;
-    for(int i = f; i < g.size() && g[i][c] < 1 ; i++)
-        y++;
-    return x*y;
-}
-int areaMasGrande(Grilla &g){
-    int areaMaxima = 0;
-    int n = g.size(), m = g[0].size();
-    for(int i = 0 ; i < n ; i++ )
-        for(int j = 0 ; j < m; j++) 
-            if(g[i][j] == 0)
-                areaMaxima = max(areaMaxima,calcularArea(g,i,j));
-    return areaMaxima;
-}
-
-void ocupar(Grilla &g, int f, int c){//O(w+h)
-    for(int i = 0; i < g.size(); i++){
-        g[i][c] = 1;
-    }
-    for(int j = 0; j < g[0].size(); j++){
-        g[f][j] = 1;
-    }
-}
-
 ostream& operator<<(ostream&os,Grilla &g){
     for(auto &fila: g){
         for(auto &columna:fila)
@@ -44,21 +16,47 @@ ostream& operator<<(ostream&os,Grilla &g){
     os << '\n';
     return os ;
 }
-
+ostream& operator<<(ostream&os,Fila fila){
+    for(auto &columna:fila)
+        os << columna <<" ";
+    os <<'\n';    
+    return os ;
+}
+int diferenciaMasGrande(Fila &f){
+    int mx = 0;
+    for(int i = 1; i < f.size(); i++)
+        mx = max(mx, f[i] - f[i-1] - 1);
+    return mx;
+}
 int solve(int t){
     int n,w,h;
     int x,y;
+
     while(t--){
         cin >> w >> h >> n;
-        Grilla grilla(h,Fila(w));
-        
-        while(n--){//(n^2)
-            cin >> y >> x;
-            ocupar(grilla,x-1,y-1);
+
+        Fila xs,ys;
+        xs.reserve(n+2);
+        ys.reserve(n+2);
+
+        xs.push_back(0);
+        xs.push_back(w+1);
+
+        ys.push_back(0);
+        ys.push_back(h+1);
+
+        while(n--){
+            cin >> x >> y;
+            xs.push_back(x);
+            ys.push_back(y);
         }
-        //cout << grilla;
-        cout << areaMasGrande(grilla) << '\n'; 
+
+        sort(xs.begin(),xs.end());
+        sort(ys.begin(),ys.end());
+
+        cout << diferenciaMasGrande(xs) * diferenciaMasGrande(ys) << '\n';
     }
+
     return 0;
 }
 
